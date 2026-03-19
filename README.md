@@ -1,6 +1,6 @@
-# Aspire: AI-Powered Learning Assistant
+# Aspire: Analytics Systems for Predictive Insights and Refined Educational Outcomes
 
-**Aspire** is an AI-powered learning assistant built with React and Tailwind CSS, specifically designed for Bachelor of Science in Computer Engineering (BSCpE) students. It maps academic performance to real outcomes, forecasts future grades leveraging machine learning, and generates personalized, skills-based resumes.
+**ASPIRE** (Analytics Systems for Predictive Insights and Refined Educational Outcomes) is an ML-powered platform built with React and Tailwind CSS that maps BSCpE student grades to Student Outcomes, predicts future academic performance, and generates skills-based resumes.
 
 ## Features
 
