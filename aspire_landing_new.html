@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASPIRE — Analytics for Predictive Educational Outcomes</title>
+<meta name="description" content="ASPIRE maps student academic performance to real outcomes, forecasts future grades with machine learning, and generates personalized skills-based resumes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#C0141B;
+  --red-dark:#8B0000;
+  --red-light:#E52D2D;
+  --white:#FFFFFF;
+  --off-white:#F5F0EE;
+  --cream:#FAF6F4;
+  --dark:#0E0000;
+  --dark2:#1A0101;
+  --grey:#8C8C8C;
+  --light-grey:#E8E0DF;
+}
+html{scroll-behavior:smooth}
+body{background:var(--white);color:var(--dark);font-family:'Inter',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--off-white)}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+
+/* ── NAVBAR ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 60px;
+  background:rgba(255,255,255,0.9);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(192,20,27,0.1);
+  transition:all 0.3s;
+}
+nav.scrolled{background:rgba(255,255,255,0.98);box-shadow:0 2px 20px rgba(0,0,0,0.06)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--dark);text-decoration:none;letter-spacing:0.1em;display:flex;align-items:center;gap:6px}
+.nav-logo .dot{width:8px;height:8px;background:var(--red);border-radius:50%;display:inline-block;margin-bottom:2px}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none;position:absolute;left:50%;transform:translateX(-50%)}
+.nav-links a{font-size:12px;font-weight:500;color:var(--grey);text-decoration:none;transition:color 0.2s;letter-spacing:0.06em;text-transform:uppercase}
+.nav-links a:hover{color:var(--dark)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-login{font-size:12px;font-weight:600;color:var(--white);background:var(--red);border:none;padding:9px 22px;border-radius:6px;cursor:pointer;transition:all 0.2s;text-decoration:none;letter-spacing:0.05em;text-transform:uppercase}
+.nav-login:hover{background:var(--red-dark);transform:translateY(-1px)}
+.mobile-menu-btn{display:none;background:none;border:none;color:var(--dark);cursor:pointer;padding:4px}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  background:var(--dark);
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+/* Red gradient bg */
+.hero::before{
+  content:'';position:absolute;
+  top:-20%;right:-10%;
+  width:70%;height:130%;
+  background:radial-gradient(ellipse at top right,rgba(192,20,27,0.55) 0%,rgba(139,0,0,0.15) 45%,transparent 70%);
+  z-index:0;
+}
+.hero::after{
+  content:'';position:absolute;
+  bottom:-10%;left:-5%;
+  width:50%;height:60%;
+  background:radial-gradient(ellipse,rgba(192,20,27,0.18) 0%,transparent 65%);
+  z-index:0;
+}
+/* Grain texture */
+.hero-grain{
+  position:absolute;inset:0;z-index:1;opacity:0.06;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.hero-nav-spacer{height:80px;flex-shrink:0}
+.hero-body{
+  flex:1;display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  padding:40px 60px 60px;
+  position:relative;z-index:2;
+  gap:40px;
+}
+/* Tag pill */
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(192,20,27,0.5);
+  border-radius:100px;padding:5px 14px 5px 5px;
+  margin-bottom:28px;
+  animation:fadeUp 0.6s ease both;
+}
+.hero-tag .pill{background:var(--red);color:white;font-size:9px;font-weight:700;padding:3px 10px;border-radius:100px;letter-spacing:0.1em;text-transform:uppercase}
+.hero-tag span{font-size:11px;font-weight:500;color:rgba(255,255,255,0.7)}
+/* Big headline */
+.hero-headline{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(72px,8vw,120px);
+  line-height:0.95;
+  letter-spacing:0.03em;
+  color:var(--white);
+  margin-bottom:8px;
+  animation:fadeUp 0.7s 0.1s ease both;
+}
+.hero-headline .red{color:var(--red)}
+.hero-headline .outline{
+  -webkit-text-stroke:2px rgba(255,255,255,0.3);
+  color:transparent;
+}
+.hero-sub-head{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,4vw,58px);
+  line-height:1;
+  letter-spacing:0.03em;
+  color:rgba(255,255,255,0.25);
+  margin-bottom:32px;
+  animation:fadeUp 0.7s 0.15s ease both;
+}
+.hero-desc{
+  font-size:14px;font-weight:400;
+  line-height:1.8;
+  color:rgba(255,255,255,0.55);
+  max-width:440px;
+  margin-bottom:40px;
+  animation:fadeUp 0.7s 0.2s ease both;
+}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;animation:fadeUp 0.7s 0.3s ease both}
+.btn-red{
+  font-size:11px;font-weight:700;
+  color:white;background:var(--red);border:none;
+  padding:13px 28px;border-radius:6px;cursor:pointer;
+  transition:all 0.2s;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+.btn-red:hover{background:var(--red-light);transform:translateY(-2px);box-shadow:0 12px 40px rgba(192,20,27,0.5)}
+.btn-outline-white{
+  font-size:11px;font-weight:600;
+  color:rgba(255,255,255,0.75);background:transparent;
+  border:1px solid rgba(255,255,255,0.2);
+  padding:13px 28px;border-radius:6px;cursor:pointer;
+  transition:all 0.2s;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+.btn-outline-white:hover{background:rgba(255,255,255,0.08);color:white}
+
+/* Stats row in hero */
+.hero-stats-row{
+  display:flex;gap:0;
+  margin-top:52px;
+  padding-top:28px;border-top:1px solid rgba(255,255,255,0.08);
+  animation:fadeUp 0.7s 0.4s ease both;
+}
+.hero-stat{padding:0 32px 0 0;margin-right:32px;border-right:1px solid rgba(255,255,255,0.08)}
+.hero-stat:last-child{border-right:none}
+.hero-stat-val{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--white);display:block;letter-spacing:0.05em}
+.hero-stat-label{font-size:10px;font-weight:500;color:rgba(255,255,255,0.4);letter-spacing:0.08em;text-transform:uppercase}
+
+/* Dashboard mockup right */
+.hero-right{position:relative;animation:fadeUp 0.9s 0.3s ease both}
+.hero-right::before{
+  content:'';position:absolute;
+  top:-40px;left:-40px;right:-40px;bottom:-40px;
+  background:radial-gradient(ellipse at center,rgba(192,20,27,0.25) 0%,transparent 70%);
+  z-index:0;pointer-events:none;
+}
+.dash-window{
+  background:#160000;
+  border-radius:16px;
+  border:1px solid rgba(192,20,27,0.3);
+  overflow:hidden;
+  box-shadow:0 50px 120px rgba(0,0,0,0.7),0 0 0 1px rgba(192,20,27,0.15);
+  position:relative;z-index:1;
+}
+.dash-topbar{
+  background:#1E0202;border-bottom:1px solid rgba(192,20,27,0.2);
+  padding:11px 16px;display:flex;align-items:center;gap:8px;
+}
+.dash-dots{display:flex;gap:5px}
+.dash-dot{width:9px;height:9px;border-radius:50%}
+.dd-r{background:#C0141B}.dd-y{background:#BF8000}.dd-g{background:#1A7A3A}
+.dash-title-bar{font-size:10px;color:rgba(255,255,255,0.35);margin-left:8px;letter-spacing:0.04em}
+.dash-body{padding:16px}
+.dash-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.d-metric{
+  background:rgba(192,20,27,0.08);
+  border:1px solid rgba(192,20,27,0.18);
+  border-radius:8px;padding:11px;
+}
+.d-metric-label{font-size:8px;font-weight:600;color:rgba(255,255,255,0.35);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:3px}
+.d-metric-val{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--white);letter-spacing:0.05em;display:block}
+.d-metric-sub{font-size:8px;color:var(--red);font-weight:600;margin-top:1px}
+.dash-row2{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;margin-bottom:12px}
+.d-box{background:rgba(192,20,27,0.06);border:1px solid rgba(192,20,27,0.12);border-radius:8px;padding:11px}
+.d-box-title{font-size:8px;font-weight:600;color:rgba(255,255,255,0.35);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px}
+.mini-bars{display:flex;align-items:flex-end;gap:3px;height:32px}
+.mb{flex:1;background:rgba(139,0,0,0.6);border-radius:2px 2px 0 0;transition:opacity 0.2s}
+.mb.hi{background:var(--red);opacity:1}
+.mb:nth-child(1){height:55%}.mb:nth-child(2){height:72%}.mb:nth-child(3){height:48%}
+.mb:nth-child(4){height:85%}.mb:nth-child(5){height:64%}.mb:nth-child(6){height:90%}
+.mb:nth-child(7){height:100%}.mb:nth-child(8){height:70%}
+.donut-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}
+.donut{width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--red) 0deg 252deg,rgba(192,20,27,0.15) 252deg 360deg);margin-bottom:5px}
+.donut-lbl{font-size:8px;color:rgba(255,255,255,0.45);text-align:center}
+.d-table{width:100%;border-collapse:collapse}
+.d-table th{font-size:7px;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:0.07em;text-transform:uppercase;padding:4px 6px;border-bottom:1px solid rgba(192,20,27,0.1);text-align:left}
+.d-table td{font-size:8px;color:rgba(255,255,255,0.65);padding:5px 6px;border-bottom:1px solid rgba(192,20,27,0.06)}
+.gb{display:inline-block;padding:2px 5px;border-radius:3px;font-weight:700;font-size:7px}
+.ga{background:rgba(26,122,58,0.18);color:#4dbf78}.gb2{background:rgba(192,20,27,0.18);color:#e06060}
+.sbw{width:44px;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden}
+.sbf{height:100%;background:var(--red);border-radius:2px}
+/* Floating cards on dashboard */
+.f-card{
+  position:absolute;
+  background:rgba(14,0,0,0.9);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(192,20,27,0.4);
+  border-radius:10px;padding:10px 14px;
+  display:flex;align-items:center;gap:10px;
+  animation:float 4s ease-in-out infinite;
+  z-index:3;box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+.f-card:nth-child(2){animation-delay:-2s}
+.f-card-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red);letter-spacing:0.05em}
+.f-card-lbl{font-size:9px;font-weight:500;color:rgba(255,255,255,0.55);line-height:1.4}
+.fc-tl{top:-22px;left:-32px}
+.fc-br{bottom:-18px;right:-28px}
+
+/* ── MARQUEE ── */
+.marquee-section{
+  overflow:hidden;
+  background:var(--red);
+  padding:0;
+}
+.marquee-track{display:flex;gap:0;animation:marquee 22s linear infinite;white-space:nowrap}
+.marquee-item{
+  display:inline-flex;align-items:center;gap:14px;
+  padding:14px 36px;border-right:1px solid rgba(255,255,255,0.15);
+  font-size:10px;font-weight:700;
+  color:rgba(255,255,255,0.85);letter-spacing:0.12em;text-transform:uppercase;
+  flex-shrink:0;
+}
+.marquee-item .m-star{font-size:14px;color:rgba(255,255,255,0.5)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── STATS STRIP ── */
+.stats-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  background:var(--dark);
+}
+.stat-item{
+  padding:60px 40px;text-align:center;
+  border-right:1px solid rgba(255,255,255,0.05);
+  position:relative;
+}
+.stat-item:last-child{border-right:none}
+.stat-item::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40px;height:2px;background:var(--red)}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:68px;color:var(--white);display:block;line-height:1;margin-bottom:6px;letter-spacing:0.03em}
+.stat-label{font-size:11px;color:rgba(255,255,255,0.35);font-weight:500;letter-spacing:0.06em;text-transform:uppercase}
+
+/* ── SECTION COMMON ── */
+.section-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10px;font-weight:700;
+  color:var(--red);letter-spacing:0.14em;text-transform:uppercase;
+  margin-bottom:16px;
+}
+.section-eyebrow::before{content:'✦';font-size:8px}
+.section-title-big{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(52px,7vw,100px);
+  line-height:0.95;letter-spacing:0.03em;
+  color:var(--dark);margin-bottom:0;
+}
+.section-title-big .grey{color:var(--light-grey)}
+.section-title-big .red{color:var(--red)}
+
+/* ── FEATURES ── */
+#features{
+  padding:100px 60px;
+  background:var(--cream);
+}
+.features-top{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:72px}
+.features-intro p{font-size:14px;line-height:1.8;color:var(--grey);max-width:380px;margin-top:24px}
+.feature-link{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;margin-top:24px;transition:gap 0.2s}
+.feature-link:hover{gap:14px}
+.features-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--light-grey);
+  border-radius:16px;overflow:hidden;
+  border:1px solid var(--light-grey);
+}
+.feat-card{
+  background:var(--cream);padding:40px 28px;
+  position:relative;overflow:hidden;
+  transition:background 0.3s,transform 0.3s;
+}
+.feat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:var(--red);transform:scaleX(0);transform-origin:left;
+  transition:transform 0.4s ease;
+}
+.feat-card:hover{background:var(--white)}
+.feat-card:hover::after{transform:scaleX(1)}
+.feat-num{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--light-grey);letter-spacing:0.05em;display:block;margin-bottom:20px;transition:color 0.3s}
+.feat-card:hover .feat-num{color:rgba(192,20,27,0.15)}
+.feat-icon{font-size:24px;margin-bottom:16px;display:block}
+.feat-title{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:10px}
+.feat-desc{font-size:12px;color:var(--grey);line-height:1.75}
+
+/* ── HOW IT WORKS ── */
+#how-it-works{
+  padding:0;background:var(--white);
+  display:grid;grid-template-columns:1fr 1fr;
+}
+.how-left{
+  padding:100px 60px;
+  background:var(--dark);
+  position:relative;overflow:hidden;
+}
+.how-left::before{
+  content:'';position:absolute;top:-100px;right:-100px;
+  width:400px;height:400px;
+  background:radial-gradient(circle,rgba(192,20,27,0.2) 0%,transparent 70%);
+}
+.how-left .section-eyebrow{color:rgba(192,20,27,0.8)}
+.how-left .section-title-big{color:var(--white)}
+.how-left .section-title-big .grey{color:rgba(255,255,255,0.15)}
+.steps-list{margin-top:48px;display:flex;flex-direction:column}
+.step-item{
+  display:flex;gap:20px;padding:24px 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  cursor:pointer;transition:all 0.2s;
+}
+.step-item:last-child{border-bottom:none}
+.step-item.active .step-num{background:var(--red);color:white;border-color:var(--red)}
+.step-num{
+  width:38px;height:38px;min-width:38px;border-radius:50%;
+  border:1px solid rgba(192,20,27,0.4);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:14px;
+  color:rgba(255,255,255,0.4);transition:all 0.3s;letter-spacing:0.05em;
+}
+.step-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px}
+.step-desc{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.7}
+
+.how-right{
+  padding:100px 60px;
+  background:var(--off-white);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.how-visual-box{
+  text-align:center;position:relative;z-index:1;
+}
+.how-big-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:180px;line-height:1;
+  color:rgba(192,20,27,0.08);
+  display:block;margin-bottom:8px;letter-spacing:0.05em;
+  transition:all 0.5s;
+}
+.how-visual-label{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:32px;color:var(--dark);
+  letter-spacing:0.05em;transition:all 0.4s;
+}
+
+/* ── FAQ ── */
+#faq{padding:100px 60px;background:var(--white)}
+.faq-grid{display:grid;grid-template-columns:380px 1fr;gap:80px;align-items:start}
+.faq-list{display:flex;flex-direction:column;gap:2px}
+.faq-item{
+  border-bottom:1px solid var(--light-grey);
+  overflow:hidden;transition:border-color 0.2s;
+}
+.faq-item.open{border-color:var(--red)}
+.faq-question{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:20px 0;background:transparent;border:none;
+  font-size:14px;font-weight:600;
+  color:var(--dark);cursor:pointer;text-align:left;transition:color 0.2s;
+}
+.faq-question:hover{color:var(--red)}
+.faq-icon{
+  width:28px;height:28px;min-width:28px;border-radius:50%;
+  background:var(--off-white);border:1px solid var(--light-grey);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--grey);font-size:16px;font-weight:300;
+  transition:transform 0.3s,background 0.2s,color 0.2s;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--red);color:white;border-color:var(--red)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s}
+.faq-item.open .faq-answer{max-height:200px;padding-bottom:20px}
+.faq-answer p{font-size:13px;color:var(--grey);line-height:1.8}
+
+/* ── CTA ── */
+.cta-section{
+  padding:120px 60px;text-align:center;
+  background:var(--dark);
+  position:relative;overflow:hidden;
+}
+.cta-section::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:900px;height:500px;
+  background:radial-gradient(ellipse,rgba(192,20,27,0.25) 0%,transparent 60%);
+}
+.cta-big{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(60px,9vw,130px);
+  line-height:0.9;letter-spacing:0.03em;
+  color:var(--white);margin-bottom:28px;
+  position:relative;z-index:1;
+}
+.cta-big .red{color:var(--red)}
+.cta-big .outline{-webkit-text-stroke:2px rgba(255,255,255,0.2);color:transparent}
+.cta-sub{font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:44px;position:relative;z-index:1}
+.cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+
+/* ── FOOTER ── */
+footer{
+  padding:32px 60px;
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--dark2);
+}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white);display:flex;align-items:center;gap:6px;letter-spacing:0.1em}
+.footer-logo .dot{width:7px;height:7px;background:var(--red);border-radius:50%}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.25)}
+.footer-links{display:flex;gap:24px;list-style:none}
+.footer-links a{font-size:11px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s;letter-spacing:0.04em}
+.footer-links a:hover{color:var(--red)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.75s ease,transform 0.75s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* Mobile overlay */
+.mobile-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(14,0,0,0.98);
+  flex-direction:column;align-items:center;justify-content:center;gap:36px;
+}
+.mobile-overlay.open{display:flex}
+.mobile-overlay a{font-family:'Bebas Neue',sans-serif;font-size:44px;color:white;text-decoration:none;letter-spacing:0.1em;transition:color 0.2s}
+.mobile-overlay a:hover{color:var(--red)}
+.mobile-close{position:absolute;top:24px;right:28px;background:none;border:none;color:white;font-size:28px;cursor:pointer}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .hero-body{grid-template-columns:1fr;text-align:center;padding:40px 32px 60px}
+  .hero-desc,.hero-tag{margin-left:auto;margin-right:auto}
+  .hero-actions{justify-content:center}
+  .hero-stats-row{justify-content:center}
+  .hero-right{display:none}
+  .features-grid{grid-template-columns:repeat(2,1fr)}
+  #how-it-works{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  nav{padding:16px 24px}
+  .nav-links,.nav-login{display:none}
+  .mobile-menu-btn{display:block}
+  #features,#faq{padding:70px 24px}
+  .how-left,.how-right{padding:70px 24px}
+  .faq-grid{grid-template-columns:1fr;gap:40px}
+  .stats-strip{grid-template-columns:repeat(2,1fr)}
+  footer{flex-direction:column;gap:16px;text-align:center;padding:24px}
+  .footer-links{flex-wrap:wrap;justify-content:center}
+  .cta-section{padding:80px 24px}
+  .features-grid{grid-template-columns:1fr}
+  .features-top{grid-template-columns:1fr}
+}
+
+/* Accent horizontal rule */
+.red-rule{height:2px;background:var(--red);margin:0}
+</style>
+</head>
+<body>
+
+<!-- MOBILE OVERLAY -->
+<div class="mobile-overlay" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()">✕</button>
+  <a href="#features" onclick="toggleMenu()">Features</a>
+  <a href="#how-it-works" onclick="toggleMenu()">How It Works</a>
+  <a href="#faq" onclick="toggleMenu()">FAQs</a>
+  <a href="#" class="btn-red" style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:0.1em;" onclick="toggleMenu()">Login</a>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">ASPIRE<span class="dot"></span></a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#faq">FAQs</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="nav-login">Login</a>
+  </div>
+  <button class="mobile-menu-btn" onclick="toggleMenu()">
+    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+  </button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-grain"></div>
+  <div class="hero-nav-spacer"></div>
+
+  <div class="hero-body">
+    <!-- LEFT -->
+    <div class="hero-left">
+      <div class="hero-tag">
+        <span class="pill">NEW</span>
+        <span>ASPIRE v1.0 — ML-Powered Academic Analytics</span>
+      </div>
+      <h1 class="hero-headline">
+        ANALYTICS<br>
+        FOR <span class="red">PREDICTIVE</span><br>
+        <span class="outline">OUTCOMES.</span>
+      </h1>
+      <p class="hero-sub-head">FROM DATA TO INSIGHT</p>
+      <p class="hero-desc">ASPIRE maps BSCpE student academic performance to ABET outcomes, forecasts future grades with machine learning, and generates personalized skills-based resumes.</p>
+      <div class="hero-actions">
+        <a href="#features" class="btn-red">
+          Explore Features
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#how-it-works" class="btn-outline-white">How it works</a>
+      </div>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <span class="hero-stat-val">680+</span>
+          <span class="hero-stat-label">Students Tracked</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">95%</span>
+          <span class="hero-stat-label">Prediction Accuracy</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">12</span>
+          <span class="hero-stat-label">ABET Outcomes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Dashboard mockup -->
+    <div class="hero-right">
+      <!-- Floating badges -->
+      <div class="f-card fc-tl">
+        <div class="f-card-val">91.3%</div>
+        <div class="f-card-lbl">Predicted<br>Next Grade</div>
+      </div>
+      <div class="f-card fc-br">
+        <div class="f-card-val">89.6%</div>
+        <div class="f-card-lbl">ABET<br>Proficiency</div>
+      </div>
+
+      <div class="dash-window">
+        <div class="dash-topbar">
+          <div class="dash-dots">
+            <div class="dash-dot dd-r"></div>
+            <div class="dash-dot dd-y"></div>
+            <div class="dash-dot dd-g"></div>
+          </div>
+          <span class="dash-title-bar">ASPIRE — Student Overview Dashboard</span>
+        </div>
+        <div class="dash-body">
+          <div class="dash-metrics">
+            <div class="d-metric">
+              <div class="d-metric-label">Current GWA</div>
+              <span class="d-metric-val">88.4</span>
+              <div class="d-metric-sub">↑ +2.1 this sem</div>
+            </div>
+            <div class="d-metric">
+              <div class="d-metric-label">ABET Score</div>
+              <span class="d-metric-val">89.6%</span>
+              <div class="d-metric-sub">Demonstrated</div>
+            </div>
+            <div class="d-metric">
+              <div class="d-metric-label">Predicted</div>
+              <span class="d-metric-val">91.3</span>
+              <div class="d-metric-sub">Next semester</div>
+            </div>
+          </div>
+          <div class="dash-row2">
+            <div class="d-box">
+              <div class="d-box-title">Grade Trend</div>
+              <div class="mini-bars">
+                <div class="mb"></div><div class="mb"></div><div class="mb"></div>
+                <div class="mb"></div><div class="mb"></div><div class="mb"></div>
+                <div class="mb hi"></div><div class="mb"></div>
+              </div>
+            </div>
+            <div class="d-box">
+              <div class="d-box-title">ABET Outcomes</div>
+              <div class="donut-wrap">
+                <div class="donut"></div>
+                <div class="donut-lbl">70% Proficient</div>
+              </div>
+            </div>
+          </div>
+          <div class="d-box">
+            <div class="d-box-title">Recent Course Performance</div>
+            <table class="d-table">
+              <thead>
+                <tr>
+                  <th>Course</th><th>Grade</th><th>ABET</th><th>Skill</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Embedded Systems</td>
+                  <td><span class="gb ga">92</span></td>
+                  <td>a, b</td>
+                  <td><div class="sbw"><div class="sbf" style="width:92%"></div></div></td>
+                </tr>
+                <tr>
+                  <td>Digital Signal Proc.</td>
+                  <td><span class="gb ga">88</span></td>
+                  <td>c, e</td>
+                  <td><div class="sbw"><div class="sbf" style="width:78%"></div></div></td>
+                </tr>
+                <tr>
+                  <td>Microelectronics</td>
+                  <td><span class="gb gb2">82</span></td>
+                  <td>b, k</td>
+                  <td><div class="sbw"><div class="sbf" style="width:62%"></div></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE (red bar) -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="m-star">✦</span>Performance Forecasting</div>
+    <div class="marquee-item"><span class="m-star">✦</span>ABET Outcome Mapping</div>
+    <div class="marquee-item"><span class="m-star">✦</span>Skill Progression</div>
+    <div class="marquee-item"><span class="m-star">✦</span>Resume Generator</div>
+    <div class="marquee-item"><span class="m-star">✦</span>XGBoost ML Models</div>
+    <div class="marquee-item"><span class="m-star">✦</span>FastAPI Backend</div>
+    <div class="marquee-item"><span class="m-star">✦</span>BSCpE Curriculum</div>
+    <div class="marquee-item"><span class="m-star">✦</span>Batangas State University</div>
+    <!-- duplicate -->
+    <div class="marquee-item"><span class="m-star">✦</span>Performance Forecasting</div>
+    <div class="marquee-item"><span class="m-star">✦</span>ABET Outcome Mapping</div>
+    <div class="marquee-item"><span class="m-star">✦</span>Skill Progression</div>
+    <div class="marquee-item"><span class="m-star">✦</span>Resume Generator</div>
+    <div class="marquee-item"><span class="m-star">✦</span>XGBoost ML Models</div>
+    <div class="marquee-item"><span class="m-star">✦</span>FastAPI Backend</div>
+    <div class="marquee-item"><span class="m-star">✦</span>BSCpE Curriculum</div>
+    <div class="marquee-item"><span class="m-star">✦</span>Batangas State University</div>
+  </div>
+</div>
+
+<!-- STATS STRIP (dark) -->
+<div class="stats-strip reveal">
+  <div class="stat-item">
+    <span class="stat-num">680+</span>
+    <span class="stat-label">Students Tracked</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">67</span>
+    <span class="stat-label">Curriculum Courses</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">12</span>
+    <span class="stat-label">ABET Student Outcomes</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">95%</span>
+    <span class="stat-label">Prediction Accuracy</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="features-top reveal">
+    <div>
+      <div class="section-eyebrow">Features</div>
+      <div class="section-title-big">
+        EVERYTHING<br>
+        YOUR <span class="red">BRAND</span><br>
+        <span class="grey">NEEDS TO GROW</span>
+      </div>
+    </div>
+    <div class="features-intro">
+      <p>Built for BSCpE students at Batangas State University — powered by machine learning and ABET frameworks to deliver insight-driven academic performance analytics.</p>
+      <a href="#how-it-works" class="feature-link">
+        See How It Works
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="features-grid reveal">
+    <div class="feat-card">
+      <span class="feat-num">01</span>
+      <span class="feat-icon">📊</span>
+      <div class="feat-title">Performance Forecasting</div>
+      <p class="feat-desc">XGBoost and Scikit-learn models analyze historical grades to predict future academic performance with high accuracy.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-num">02</span>
+      <span class="feat-icon">🎯</span>
+      <div class="feat-title">ABET Outcome Mapping</div>
+      <p class="feat-desc">Automatically maps course ILOs to ABET Student Outcomes (a–l), giving a clear picture of competency development.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-num">03</span>
+      <span class="feat-icon">📈</span>
+      <div class="feat-title">Skill Progress Tracking</div>
+      <p class="feat-desc">Monitor your skill acquisition trajectory across all semesters with Bloom's Taxonomy-aligned assessments.</p>
+    </div>
+    <div class="feat-card">
+      <span class="feat-num">04</span>
+      <span class="feat-icon">📄</span>
+      <div class="feat-title">Resume Generator</div>
+      <p class="feat-desc">Auto-generate a skills-based resume tailored to your actual competency profile — not just your GPA.</p>
+    </div>
+  </div>
+</section>
+
+<div class="red-rule"></div>
+
+<!-- HOW IT WORKS (split dark/light) -->
+<section id="how-it-works">
+  <div class="how-left">
+    <div class="section-eyebrow reveal">How It Works</div>
+    <div class="section-title-big reveal">UP AND<br>RUNNING IN<br><span class="red">3 STEPS</span></div>
+    <div class="steps-list">
+      <div class="step-item active reveal" onclick="setStep(this,1)">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Input Your Academic Records</div>
+          <p class="step-desc">Upload your grades per subject and semester. The system accepts standard BSCpE curriculum data from Batangas State University.</p>
+        </div>
+      </div>
+      <div class="step-item reveal" onclick="setStep(this,2)">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">ML Models Analyze &amp; Predict</div>
+          <p class="step-desc">Our FastAPI backend runs XGBoost and Scikit-learn pipelines to map outcomes and generate performance forecasts.</p>
+        </div>
+      </div>
+      <div class="step-item reveal" onclick="setStep(this,3)">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">View Insights &amp; Export Resume</div>
+          <p class="step-desc">Explore your dashboard, review ABET outcome alignment, and download your personalized skills-based resume.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="how-right reveal">
+    <div class="how-visual-box">
+      <span class="how-big-num" id="stepNum">01</span>
+      <div class="how-visual-label" id="stepLabel">Input Academic Records</div>
+    </div>
+  </div>
+</section>
+
+<div class="red-rule"></div>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="faq-grid">
+    <div>
+      <div class="section-eyebrow reveal">FAQ</div>
+      <div class="section-title-big reveal" style="font-size:clamp(44px,5vw,72px)">
+        FREQUENTLY<br>
+        <span class="red">ASKED</span><br>
+        <span class="grey">QUESTIONS</span>
+      </div>
+      <p style="font-size:13px;color:var(--grey);line-height:1.8;margin-top:20px;max-width:300px" class="reveal">Everything you need to know about ASPIRE and how it works for BSCpE students.</p>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item open">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          What is ASPIRE and how does it work?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>ASPIRE (Analytics Systems for Predictive Insights and Refined Educational Outcomes) is an ML-powered platform that maps BSCpE student grades to ABET Student Outcomes, predicts future academic performance, and generates skills-based resumes.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          Which ML models does ASPIRE use?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>ASPIRE primarily uses XGBoost for performance forecasting and Scikit-learn pipelines for classification and regression tasks. The backend is built on FastAPI with a React dashboard for visualization.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          Is student grade data kept private?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Yes. All student records are anonymized and stored securely. The system uses SR-CODE identifiers rather than personal identifying information, and access is role-restricted per university policy.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          What is ABET outcome mapping?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>ABET Student Outcomes (a–l) define the competencies BSCpE graduates must demonstrate. ASPIRE automatically aligns each course's ILOs to these outcomes, tracking your proficiency level across all semesters.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFAQ(this)">
+          Can I generate a resume directly from ASPIRE?
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Absolutely. The Resume Generator synthesizes your ABET outcome scores and strongest skill areas into a downloadable resume, highlighting competencies rather than just academic grades.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section reveal">
+  <h2 class="cta-big">
+    TURN DATA<br>
+    INTO <span class="red">VISUAL</span><br>
+    <span class="outline">OUTCOMES.</span>
+  </h2>
+  <p class="cta-sub">Join ASPIRE today and take data-driven control of your academic journey.</p>
+  <div class="cta-actions">
+    <a href="#" class="btn-red">
+      Get Started
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <a href="#features" class="btn-outline-white">Learn More</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ASPIRE<span class="dot"></span></div>
+  <ul class="footer-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#faq">FAQs</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 ASPIRE. Batangas State University. All rights reserved.</p>
+</footer>
+
+<script>
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Mobile menu
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// FAQ accordion
+function toggleFAQ(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// Step switcher
+const stepData = {
+  1: 'Input Academic Records',
+  2: 'ML Analyzes & Predicts',
+  3: 'View Insights & Export'
+};
+function setStep(el, n) {
+  document.querySelectorAll('.step-item').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('stepNum').textContent = String(n).padStart(2,'0');
+  document.getElementById('stepLabel').textContent = stepData[n];
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
